@@ -1,1 +1,14 @@
-node_modules
+# Node modules
+node_modules/
+
+# Logs
+*.log
+
+# npm package-lock file
+package-lock.json
+
+# Environment variables file
+.env
+
+# Editor specific files (VS Code, etc.)
+.vscode/

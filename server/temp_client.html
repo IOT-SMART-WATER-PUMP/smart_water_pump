@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Water Level Monitoring</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+      }
+      .container {
+        text-align: center;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      input[type="number"] {
+        padding: 10px;
+        font-size: 16px;
+        margin: 10px 0;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .response {
+        margin-top: 20px;
+      }
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Water Level Monitoring</h1>
+      <form id="waterLevelForm">
+        <label for="waterLevel">Enter Water Level (cm): </label>
+        <input
+          type="number"
+          id="waterLevel"
+          name="waterLevel"
+          required
+          min="0"
+          step="any"
+          placeholder="Water level in cm"
+        />
+        <br />
+        <button type="submit">Submit Data</button>
+      </form>
+
+      <div class="response" id="responseMessage"></div>
+    </div>
+
+    <script>
+      document
+        .getElementById("waterLevelForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault(); // Prevent form submission
+
+          // Get the water level input value
+          const waterLevel = parseFloat(
+            document.getElementById("waterLevel").value
+          );
+          if (isNaN(waterLevel) || waterLevel <= 0) {
+            alert("Please enter a valid water level.");
+            return;
+          }
+
+          // Get the current timestamp
+          function getLocalDatetime() {
+            const now = new Date(); // Get the current local time
+
+            // Extract the components from the Date object
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, "0"); // getMonth() returns 0-based month, so add 1
+            const day = String(now.getDate()).padStart(2, "0");
+            const hours = String(now.getHours()).padStart(2, "0");
+            const minutes = String(now.getMinutes()).padStart(2, "0");
+            const seconds = String(now.getSeconds()).padStart(2, "0");
+
+            // Format the date in the format "YYYY-MM-DD HH:MM:SS"
+            const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+            return formattedDate;
+          }
+
+          // Usage
+          const timestamp = getLocalDatetime();
+
+          // Data to send
+          const data = {
+            time: timestamp,
+            water_level: waterLevel,
+          };
+
+          // Send the data via POST request to the Node.js server
+          try {
+            const response = await fetch(
+              "http://127.0.0.1:3000/store_data",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+              }
+            );
+
+            // Handle server response
+            const result = await response.json();
+            if (response.status === 200) {
+              document.getElementById(
+                "responseMessage"
+              ).innerHTML = `<span style="color: green;">Data successfully sent!</span><br>Server Response: ${JSON.stringify(
+                result
+              )}`;
+            } else {
+              document.getElementById(
+                "responseMessage"
+              ).innerHTML = `<span class="error">Failed to send data. Status code: ${
+                response.status
+              }</span><br>Server Error: ${JSON.stringify(result)}`;
+            }
+          } catch (error) {
+            document.getElementById(
+              "responseMessage"
+            ).innerHTML = `<span class="error">Error: ${error.message}</span>`;
+          }
+        });
+    </script>
+  </body>
+</html>

@@ -2,13 +2,16 @@ import requests
 import json
 from datetime import datetime
 
+port = 3000
+ip = "127.0.0.1"
+
 # The URL of your Node.js server
-url = "http://localhost:3000/data"
+url = f"http://{ip}:{port}/store_data"
 
 # Sample data (timestamp and water level)
 data = {
     "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    "water_level": 45.6,  # Example water level
+    "water_level": 61.6,  # Example water level
 }
 
 # Send a POST request with the JSON data

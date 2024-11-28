@@ -8,7 +8,7 @@ const cors = require('cors');
 
 const app = express();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 7000;
 const ip = process.env.IP || "127.0.0.1"; 
 
 const dbHost = process.env.DB_HOST;
@@ -40,11 +40,12 @@ app.post("/store_data", (req, res) => {
   const { time, water_level } = req.body;
 
   console.log(time);
-
+console.log(water_level);
   // Insert data into MySQL
   const query = "INSERT INTO water_level_data (time, water_level) VALUES (?, ?)";
   db.query(query, [time, water_level], (err, result) => {
     if (err) {
+        console.log(err.message);
       return res.status(500).json({ error: err.message });
     }
     res.status(200).json({ message: "Data stored successfully", result });
@@ -52,7 +53,7 @@ app.post("/store_data", (req, res) => {
 });
 
 // API endpoint to retrieve water level data
-//http://127.0.0.1:3000/get_data
+//http://127.0.0.1:7000/get_data
 app.get("/get_data", (req, res) => {
   const query = "SELECT * FROM water_level_data";
   db.query(query, (err, result) => {
@@ -64,7 +65,7 @@ app.get("/get_data", (req, res) => {
 });
 
 // API endpoint to retrieve water level data in time range
-//http://127.0.0.1:3000/get_data_time_range?start_time=2023-01-01T00:00:00&end_time=2025-01-01T23:59:59
+//http://127.0.0.1:7000/get_data_time_range?start_time=2023-01-01T00:00:00&end_time=2025-01-01T23:59:59
 app.get("/get_data_time_range", (req, res) => {
   const { start_time, end_time } = req.query;
   const query = "SELECT * FROM water_level_data WHERE time BETWEEN ? AND ?";

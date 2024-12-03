@@ -3,7 +3,7 @@ const moment = require("moment-timezone"); // Import moment-timezone for handlin
 
 // Tank configuration
 const TANK_CAPACITY = 1000; // in liters
-const REFILL_THRESHOLD = 500; // Refill when below this level
+const REFILL_THRESHOLD = 100; // Refill when below this level
 const DAILY_CONSUMPTION = 2000; // liters/day
 const BASE_CONSUMPTION_RATE = DAILY_CONSUMPTION / 86400; // Mean liters per second
 const CONSUMPTION_RATE_SD = BASE_CONSUMPTION_RATE * 0.1; // 10% of the mean as standard deviation
